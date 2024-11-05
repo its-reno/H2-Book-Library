@@ -9,7 +9,7 @@ public class App
     {
         try (DatabaseConnection databaseConnection = new DatabaseConnection();
              Connection connection = databaseConnection.getConnection();
-             Statement statement = connection.createStatement();) {
+             Statement statement = connection.createStatement()) {
 
             System.out.println("Connected to H2 database");
 
