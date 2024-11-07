@@ -9,15 +9,17 @@ public class Book {
     private String author;
     private int published_year;
     private String genre;
+    private String isbn;
     private boolean available;
 
-    public Book(int id, String title, String author, int published_year, String genre, boolean available) {
+    public Book(String title, String author, int published_year, String genre, String isbn) {
         this.id = 0; //id is auto incremented in the database
         this.title = title;
         this.author = author;
         this.published_year = published_year;
         this.genre = genre;
-        this.available = available;
+        this.isbn = isbn;
+        this.available = available; //available by default
     }
 
     public int getId() {
@@ -60,7 +62,15 @@ public class Book {
         this.genre = genre;
     }
 
-    public boolean isAvailable() {
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public boolean getAvailable() {
         return available;
     }
 
@@ -76,6 +86,7 @@ public class Book {
                 ", author='" + author + '\'' +
                 ", published_year=" + published_year +
                 ", genre='" + genre + '\'' +
+                ", isbn='" + isbn + '\'' +
                 ", available=" + available +
                 '}';
     }

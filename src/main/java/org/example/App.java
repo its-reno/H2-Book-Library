@@ -2,6 +2,7 @@ package org.example;
 
 
 import java.sql.*;
+import java.util.Scanner;
 
 public class App
 {
@@ -13,31 +14,31 @@ public class App
 
             System.out.println("Connected to H2 database");
 
-            //create a book table
-            String createTableSQL = "CREATE TABLE IF NOT EXISTS books (" +
-                    "id INT PRIMARY KEY AUTO_INCREMENT, " +
-                    "title VARCHAR(255) NOT NULL, " +
-                    "author VARCHAR(255) NOT NULL, " +
-                    "published_year INT, " +
-                    "genre VARCHAR(255), " +
-                    "available BOOLEAN DEFAULT TRUE" +
-                    ")";
 
-                statement.execute(createTableSQL);
-                System.out.println("Table 'books' created!");
+            //create the tables
+            databaseConnection.createTables();
 
 
             //Insert data
-            String insertSQL = "INSERT INTO books (title, author, published_year, genre, available) VALUES(?,?,?,?,?)";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
-                preparedStatement.setString(1, "Harry Potter and the Philosopher's Stone");
-                preparedStatement.setString(2, "J.K. Rowling");
-                preparedStatement.setInt(3, 1997);
-                preparedStatement.setString(4, "fantasy");
-                preparedStatement.setBoolean(5, true);
-                preparedStatement.executeUpdate();
-                System.out.println("Inserted data into the 'books' table");
-            }
+            //TODO: refactor code, move to new method in new class
+            //TODO: input validation
+            //TODO: only insert if ISBN is unique
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter the details of the new book:");
+            System.out.println("Title: ");
+            String title = scanner.nextLine();
+            System.out.println("Author: ");
+            String author = scanner.nextLine();
+            System.out.println("Published year: ");
+            int year = scanner.nextInt();
+            scanner.nextLine();
+            System.out.println("Genre: ");
+            String genre = scanner.nextLine();
+            System.out.println("ISBN: ");
+            String isbn = scanner.nextLine();
+            Book book = new Book(title, author, year, genre, isbn);
+            databaseConnection.addBookToDatabase(book);
+
 
             //read data
             String selectSQL = "SELECT * FROM books";
@@ -45,12 +46,13 @@ public class App
                 System.out.println("Reading data from 'books'");
                 while (resultSet.next()) {
                     int id = resultSet.getInt("id");
-                    String title = resultSet.getString("title");
-                    String author = resultSet.getString("author");
+                    title = resultSet.getString("title");
+                    author = resultSet.getString("author");
                     int published_year = resultSet.getInt("published_year");
-                    String genre = resultSet.getString("genre");
+                    genre = resultSet.getString("genre");
+                    isbn = resultSet.getString("isbn");
                     boolean available = resultSet.getBoolean("available");
-                    System.out.printf("ID: %d, Title: %s, Author: %s, published year: %d, genre: %s, is it available? %b%n", id, title, author, published_year, genre, available);
+                    System.out.printf("ID: %d, Title: %s, Author: %s, published year: %d, genre: %s, isbn: %s, is it available? %b%n", id, title, author, published_year, genre, isbn, available);
                 }
             }
 
