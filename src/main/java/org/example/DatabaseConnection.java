@@ -75,6 +75,43 @@ public class DatabaseConnection implements AutoCloseable{
         }
     }
 
+    //read data
+    public void queryBookTable() {
+        String selectSQL = "SELECT * FROM books";
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(selectSQL)) {
+            System.out.println("Reading data from 'books'");
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String title = resultSet.getString("title");
+                String author = resultSet.getString("author");
+                int published_year = resultSet.getInt("published_year");
+                String genre = resultSet.getString("genre");
+                String isbn = resultSet.getString("isbn");
+                boolean available = resultSet.getBoolean("available");
+                System.out.printf("ID: %d, Title: %s, Author: %s, published year: %d, genre: %s, isbn: %s, is it available? %b%n", id, title, author, published_year, genre, isbn, available);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void removeBookFromDatabase(int bookID) {
+        String removeSQL = "DELETE FROM books WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(removeSQL)) {
+            statement.setInt(1, bookID);
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0)
+                System.out.println("Book deleted.");
+            else
+                System.out.println("No book with that ID.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     /*
     TODO:
     removeBookFromDatabase(int bookId) - Delete a book record.

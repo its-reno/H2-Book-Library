@@ -8,56 +8,67 @@ public class App
 {
     public static void main( String[] args )
     {
-        try (DatabaseConnection databaseConnection = new DatabaseConnection();
+        try (Scanner scanner = new Scanner(System.in);
+             DatabaseConnection databaseConnection = new DatabaseConnection();
              Connection connection = databaseConnection.getConnection();
              Statement statement = connection.createStatement()) {
 
-            System.out.println("Connected to H2 database");
-
-
             //create the tables
             databaseConnection.createTables();
+            System.out.println("Connected to H2 database");
 
-
-            //Insert data
-            //TODO: refactor code, move to new method in new class
-            //TODO: input validation
-            //TODO: only insert if ISBN is unique
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Enter the details of the new book:");
-            System.out.println("Title: ");
-            String title = scanner.nextLine();
-            System.out.println("Author: ");
-            String author = scanner.nextLine();
-            System.out.println("Published year: ");
-            int year = scanner.nextInt();
+            showMenu();
+            int choice = scanner.nextInt();
             scanner.nextLine();
-            System.out.println("Genre: ");
-            String genre = scanner.nextLine();
-            System.out.println("ISBN: ");
-            String isbn = scanner.nextLine();
-            Book book = new Book(title, author, year, genre, isbn);
-            databaseConnection.addBookToDatabase(book);
+            switch(choice) {
+                case 1: //query the book table
+                    databaseConnection.queryBookTable();
+                    break;
+                case 2: //add new book
+                    Book book = addBook(scanner);
+                    databaseConnection.addBookToDatabase(book);
+                    break;
+                case 3: //delete book
+                    System.out.println("Enter the ID of the book you'd like to delete: ");
+                    int id = scanner.nextInt();
+                    scanner.nextLine();
+                    databaseConnection.removeBookFromDatabase(id);
+                    break;
+                case 0:
+                    System.exit(0);
+                default:
+                    System.out.println("Wrong choise, choose between 0-3.");
+                    break;
 
-
-            //read data
-            String selectSQL = "SELECT * FROM books";
-            try (ResultSet resultSet = statement.executeQuery(selectSQL)) {
-                System.out.println("Reading data from 'books'");
-                while (resultSet.next()) {
-                    int id = resultSet.getInt("id");
-                    title = resultSet.getString("title");
-                    author = resultSet.getString("author");
-                    int published_year = resultSet.getInt("published_year");
-                    genre = resultSet.getString("genre");
-                    isbn = resultSet.getString("isbn");
-                    boolean available = resultSet.getBoolean("available");
-                    System.out.printf("ID: %d, Title: %s, Author: %s, published year: %d, genre: %s, isbn: %s, is it available? %b%n", id, title, author, published_year, genre, isbn, available);
-                }
             }
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static void showMenu() {
+        System.out.println("=================================");
+        System.out.println("Select what do you want to do: ");
+        System.out.println("1. Query books database");
+        System.out.println("2. Add new book to the database");
+        System.out.println("3. Remove book from the database");
+    }
+
+    //return a Book object based on user's input
+    private static Book addBook(Scanner scanner) {
+        System.out.println("Enter the details of the new book:");
+        System.out.println("Title: ");
+        String title = scanner.nextLine();
+        System.out.println("Author: ");
+        String author = scanner.nextLine();
+        System.out.println("Published year: ");
+        int year = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Genre: ");
+        String genre = scanner.nextLine();
+        System.out.println("ISBN: ");
+        String isbn = scanner.nextLine();
+
+        return new Book(title, author, year, genre, isbn);
     }
 }
