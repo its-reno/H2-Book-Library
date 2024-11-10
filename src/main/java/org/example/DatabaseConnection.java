@@ -112,9 +112,25 @@ public class DatabaseConnection implements AutoCloseable{
 
     }
 
+    public void updateBookAvailability(int bookID, boolean availability) {
+        String updateBookSQL = "UPDATE books SET available = ? WHERE ID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(updateBookSQL)) {
+            statement.setBoolean(1, availability);
+            statement.setInt(2, bookID);
+            int affectedRows = statement.executeUpdate();
+            if(affectedRows > 0){
+                System.out.println("Book availability updated.");
+            } else {
+                System.out.println("Book with ID: " + bookID + " doesn't exist");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     /*
     TODO:
-    removeBookFromDatabase(int bookId) - Delete a book record.
+
     updateBookAvailability(int bookId, boolean isAvailable) - Update the book’s availability status.
             addUserToDatabase(User user) - Add a user to the database.
     recordBorrow(int bookId, int userId) - Records a borrowing event.

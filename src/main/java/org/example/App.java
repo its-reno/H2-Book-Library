@@ -17,6 +17,9 @@ public class App
             databaseConnection.createTables();
             System.out.println("Connected to H2 database");
 
+            while (true) {
+
+
             showMenu();
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -34,16 +37,31 @@ public class App
                     scanner.nextLine();
                     databaseConnection.removeBookFromDatabase(id);
                     break;
+                case 4:
+                    System.out.println("Enter the book ID to modify its availability:");
+                    id = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.println("Enter the new availability of the book. Enter a/available, or u/unavailable.");
+                    String available = scanner.nextLine();
+                    boolean isAvailable;
+                    if(available.equals("a") || available.equals("available")){
+                        isAvailable = true;
+                    } else {
+                        isAvailable = false;
+                    }
+                    databaseConnection.updateBookAvailability(id, isAvailable);
+                    break;
                 case 0:
                     System.exit(0);
                 default:
                     System.out.println("Wrong choise, choose between 0-3.");
                     break;
 
-            }
+            }}
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
     }
 
     private static void showMenu() {
@@ -52,6 +70,8 @@ public class App
         System.out.println("1. Query books database");
         System.out.println("2. Add new book to the database");
         System.out.println("3. Remove book from the database");
+        System.out.println("4. Change availability of a book");
+        System.out.println("0. Quit program");
     }
 
     //return a Book object based on user's input
