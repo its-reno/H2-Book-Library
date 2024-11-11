@@ -46,6 +46,8 @@ public class DatabaseConnection implements AutoCloseable{
             String createBorrowedBooksTable = "CREATE TABLE IF NOT EXISTS borrowed_books(" +
                     "bookID INT, " +
                     "userID INT, " +
+                    "borrow_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+                    "returned BOOLEAN DEFAULT FALSE," +
                     "FOREIGN KEY(bookID) REFERENCES books(id), " +
                     "FOREIGN KEY(userID) REFERENCES users(id))";
             statement.execute(createBooksTable);
@@ -128,13 +130,39 @@ public class DatabaseConnection implements AutoCloseable{
         }
     }
 
+    public void addUserToDatabase(User user) {
+        String addUserSQL = "INSERT INTO users (name, email) VALUES (?,?)";
+        try (PreparedStatement statement = connection.prepareStatement(addUserSQL)) {
+            statement.setString(1, user.getName());
+            statement.setString(2, user.getEmail());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void recordBorrow(int bookID, int userID) {
+        String recordBorrowSQL = "INSERT INTO borrowed_books (bookID, userID) VALUES (?,?)";
+        try (PreparedStatement statement = connection.prepareStatement(recordBorrowSQL)) {
+            statement.setInt(1, bookID);
+            statement.setInt(2, userID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void recordReturn(int bookID, int userID) {
+        String recordReturnSQL = "UPDATE borrowed_books SET returned = TRUE WHERE bookID = ? AND userID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(recordReturnSQL)) {
+            statement.setInt(1, bookID);
+            statement.setInt(2, userID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     /*
     TODO:
-
-    updateBookAvailability(int bookId, boolean isAvailable) - Update the book’s availability status.
-            addUserToDatabase(User user) - Add a user to the database.
-    recordBorrow(int bookId, int userId) - Records a borrowing event.
-    recordReturn(int bookId, int userId) - Records a return event.
-            fetchAvailableBooks() - Retrieves all available books.
-    fetchBorrowedBooks(int userId) - Retrieves books borrowed by a specific user.*/
+           fetchAvailableBooks() - Retrieves all available books.
+           fetchBorrowedBooks(int userId) - Retrieves books borrowed by a specific user.
+    */
 }
