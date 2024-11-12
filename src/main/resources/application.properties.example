@@ -1,0 +1,6 @@
+# application.properties
+
+# Database connection settings
+jdbc.url=jdbc:h2:./data/testdb
+jdbc.username=your_usename
+jdbc.password=your_password

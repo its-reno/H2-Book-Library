@@ -1,4 +1,4 @@
-package org.example;
+package library;
 
 /**
  * Represents each book in the library.
@@ -19,7 +19,7 @@ public class Book {
         this.published_year = published_year;
         this.genre = genre;
         this.isbn = isbn;
-        this.available = available; //available by default
+        this.available = true; //available by default
     }
 
     public int getId() {

@@ -1,4 +1,4 @@
-package org.example;
+package library;
 
 /**
  * Represents each user who borrows books
