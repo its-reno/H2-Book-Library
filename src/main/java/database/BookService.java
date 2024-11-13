@@ -1,9 +1,7 @@
 package database;
 
 import library.Book;
-
 import java.sql.*;
-import java.util.Scanner;
 
 public class BookService {
 

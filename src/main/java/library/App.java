@@ -2,7 +2,9 @@ package library;
 
 
 import database.BookService;
+import database.BorrowService;
 import database.DatabaseConnection;
+import database.UserService;
 
 import java.sql.*;
 import java.util.Scanner;
@@ -16,7 +18,9 @@ public class App
              DatabaseConnection databaseConnection = new DatabaseConnection();
              Connection connection = databaseConnection.getConnection();
              Statement statement = connection.createStatement()) {
-             BookService bookService = new BookService(connection);
+            BookService bookService = new BookService(connection);
+            UserService userService = new UserService(connection);
+            BorrowService borrowService = new BorrowService(connection);
 
             //create the tables
             databaseConnection.createTables();
@@ -45,16 +49,23 @@ public class App
                         System.out.println("Enter the new availability of the book. Enter a/available, or u/unavailable.");
                         String available = scanner.nextLine();
                         boolean isAvailable;
-                        if(available.equals("a") || available.equals("available")){
-                            isAvailable = true;
-                        } else {
-                            isAvailable = false;
-                        }
+                        isAvailable = available.equals("a") || available.equals("available");
                         bookService.updateBookAvailability(id, isAvailable);
                         break;
                     case 5:
                         System.out.println("Fetching all available books");
                         bookService.fetchAvailableBooks();
+                        break;
+                    case 6:
+                        userService.fetchUsers();
+                        break;
+                    case 7:
+                        System.out.println("Enter new user's name: ");
+                        String name = scanner.nextLine();
+                        System.out.println("Enter email address: ");
+                        String email = scanner.nextLine();
+                        User user = new User(name, email);
+                        userService.addUserToDatabase(user);
                         break;
                     case 0:
                         System.exit(0);
@@ -77,6 +88,8 @@ public class App
         System.out.println("3. Remove book from the database");
         System.out.println("4. Change availability of a book");
         System.out.println("5. List available books");
+        System.out.println("6. Query users");
+        System.out.println("7. Add new user");
         System.out.println("0. Quit program");
     }
 
