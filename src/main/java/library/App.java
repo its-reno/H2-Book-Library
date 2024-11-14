@@ -37,35 +37,19 @@ public class App
                         bookService.addBookToDatabase(addBook(scanner));
                         break;
                     case 3: //delete book
-                        System.out.println("Enter the ID of the book you'd like to delete: ");
-                        int id = scanner.nextInt();
-                        scanner.nextLine();
-                        bookService.removeBookFromDatabase(id);
+                        removeBook(scanner, bookService);
                         break;
-                    case 4:
-                        System.out.println("Enter the book ID to modify its availability:");
-                        id = scanner.nextInt();
-                        scanner.nextLine();
-                        System.out.println("Enter the new availability of the book. Enter a/available, or u/unavailable.");
-                        String available = scanner.nextLine();
-                        boolean isAvailable;
-                        isAvailable = available.equals("a") || available.equals("available");
-                        bookService.updateBookAvailability(id, isAvailable);
+                    case 4: //modify a book's availability
+                        updateBookAvailability(scanner, bookService);
                         break;
-                    case 5:
-                        System.out.println("Fetching all available books");
+                    case 5: //fetch all books that are available
                         bookService.fetchAvailableBooks();
                         break;
-                    case 6:
+                    case 6: //fetch all users from the database
                         userService.fetchUsers();
                         break;
-                    case 7:
-                        System.out.println("Enter new user's name: ");
-                        String name = scanner.nextLine();
-                        System.out.println("Enter email address: ");
-                        String email = scanner.nextLine();
-                        User user = new User(name, email);
-                        userService.addUserToDatabase(user);
+                    case 7: //add a new user to the database
+                        addUser(scanner, userService);
                         break;
                     case 0:
                         System.exit(0);
@@ -121,5 +105,32 @@ public class App
         String isbn = scanner.nextLine();
 
         return new Book(title, author, year, genre, isbn);
+    }
+
+
+    private static void removeBook(Scanner scanner, BookService bookService) {
+        System.out.print("Enter the ID of the book you'd like to delete: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+        bookService.removeBookFromDatabase(id);
+    }
+
+    private static void updateBookAvailability(Scanner scanner, BookService bookService) {
+        System.out.print("Enter the book ID to modify its availability: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+        System.out.print("Enter new availability (a/available or u/unavailable): ");
+        String availabilityInput = scanner.nextLine();
+
+        AvailabilityStatus availability = availabilityInput.equalsIgnoreCase("a") ? AvailabilityStatus.AVAILABLE : AvailabilityStatus.UNAVAILABLE;
+        bookService.updateBookAvailability(id, availability == AvailabilityStatus.AVAILABLE);
+    }
+
+    private static void addUser(Scanner scanner, UserService userService) {
+        System.out.print("Enter new user's name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter email address: ");
+        String email = scanner.nextLine();
+        userService.addUserToDatabase(new User(name, email));
     }
 }

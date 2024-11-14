@@ -80,6 +80,7 @@ public class BookService {
     }
 
     public void fetchAvailableBooks() {
+        System.out.println("Fetching all available books");
         String fetchSQL = "SELECT * FROM books WHERE available = true";
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(fetchSQL)) {
